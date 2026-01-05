@@ -7,22 +7,19 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// Langsung gunakan rute produk tanpa proteksi login
+// Hubungkan ke rute produk
 app.use('/api/products', productRoutes);
 
-// KONEKSI VERSI LEGACY (Paling tahan banting untuk internet di Indonesia)
-const ATLAS_URI = "mongodb://sachio:sachio123@ac-9zmrw1u-shard-00-00.mongodb.net:27017,ac-9zmrw1u-shard-00-01.mongodb.net:27017,ac-9zmrw1u-shard-00-02.mongodb.net:27017/gudangku?ssl=true&replicaSet=atlas-v9y836-shard-0&authSource=admin&retryWrites=true&w=majority";
+// KONEKSI STABIL (Gunakan URI ini untuk menembus blokir jaringan)
+const ATLAS_URI = "mongodb+srv://admin123:admin321@cluster0.8xn1lpj.mongodb.net/?appName=Cluster0";
 
-mongoose.connect(ATLAS_URI)
-  .then(() => {
-    console.log("---------------------------------------");
-    console.log("✅ BERHASIL! DATABASE TERHUBUNG KEMBALI");
-    console.log("---------------------------------------");
-  })
+mongoose.connect(ATLAS_URI, { serverSelectionTimeoutMS: 5000 })
+  .then(() => console.log("✅ DATABASE BERHASIL TERHUBUNG"))
   .catch(err => {
     console.error("❌ KONEKSI GAGAL:", err.message);
+    console.log("👉 Tip: Jika masih merah, ganti ke HOTSPOT HP sebentar.");
   });
 
 app.listen(5000, () => {
-  console.log("🚀 SERVER GUDANGKU AKTIF DI PORT 5000");
+  console.log("🚀 SERVER AKTIF DI PORT 5000");
 });
