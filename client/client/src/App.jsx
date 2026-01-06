@@ -31,8 +31,8 @@ const App = () => {
   const [formData, setFormData] = useState({ code: '', name: '', stock: '', category: '', expiryDate: '', buyPrice: '', sellPrice: '' });
   const [logReason, setLogReason] = useState(""); 
 
-  const API_URL = 'http://localhost:5000/api/products';
-  const AUTH_URL = 'http://localhost:5000/api/auth';
+  const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api/products';
+  const AUTH_URL = import.meta.env.VITE_AUTH_URL || 'http://localhost:5000/api/auth';
   const today = new Date().toISOString().split('T')[0];
 
   // Helper: Mendapatkan config auth terbaru
