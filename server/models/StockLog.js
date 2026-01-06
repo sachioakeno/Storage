@@ -2,9 +2,10 @@ const mongoose = require('mongoose');
 
 const logSchema = new mongoose.Schema({
   productName: String,
-  type: { type: String, enum: ['IN', 'OUT', 'NEW'] }, // Masuk, Keluar, atau Baru
+  type: { type: String, enum: ['IN', 'OUT', 'NEW'] },
   quantity: Number,
   reason: String,
+  owner: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true }, 
   date: { type: Date, default: Date.now }
 });
 

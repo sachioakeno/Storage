@@ -1,35 +1,29 @@
 const User = require('../models/User');
+const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
+
+const JWT_SECRET = 'gudangku_secret_key_123';
 
 exports.register = async (req, res) => {
-  console.log("--- Mencoba Pendaftaran Baru ---");
-  console.log("Data diterima:", req.body); // Jika ini muncul 'undefined', berarti express.json() bermasalah
-
   try {
-    const { username, password } = req.body;
-    
-    if (!username || !password) {
-      return res.status(400).json({ message: "Username dan Password wajib diisi!" });
-    }
-
-    const newUser = new User({ username, password });
+    const { email, password } = req.body;
+    const hashedPassword = await bcrypt.hash(password, 10);
+    const newUser = new User({ email, password: hashedPassword });
     await newUser.save();
-    
-    console.log("✅ Berhasil simpan user:", username);
-    res.status(201).json({ message: "User berhasil didaftarkan!" });
+    res.status(201).json({ message: "Registrasi berhasil!" });
   } catch (err) {
-    console.error("❌ Error Register:", err.message);
-    res.status(500).json({ message: "Gagal simpan ke database", error: err.message });
+    res.status(500).json({ message: "Email sudah terdaftar atau tidak valid" });
   }
 };
 
 exports.login = async (req, res) => {
-  console.log("--- Mencoba Login ---");
-  const { username, password } = req.body;
   try {
-    const user = await User.findOne({ username, password });
-    if (!user) return res.status(401).json({ message: "Username/Password salah" });
-    res.json({ token: 'dummy-token', user: { username: user.username } });
-  } catch (err) {
-    res.status(500).json({ message: "Error server" });
-  }
+    const { email, password } = req.body;
+    const user = await User.findOne({ email });
+    if (!user || !(await bcrypt.compare(password, user.password))) {
+      return res.status(401).json({ message: "Email atau Password salah" });
+    }
+    const token = jwt.sign({ id: user._id, email: user.email }, JWT_SECRET, { expiresIn: '1d' });
+    res.json({ token, user: { email: user.email, id: user._id } });
+  } catch (err) { res.status(500).json({ message: "Error server" }); }
 };

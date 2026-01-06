@@ -5,7 +5,7 @@ const productSchema = new mongoose.Schema({
   code: { 
     type: String, 
     required: true, // Wajib ada
-    unique: true    // Tidak boleh ada kode kembar
+  
   },
   name: {
     type: String,
@@ -26,6 +26,7 @@ const productSchema = new mongoose.Schema({
     type: Date,
     required: [true, 'Tanggal kadaluwarsa harus diisi']
   },
+  owner: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
   createdAt: {
     type: Date,
     default: Date.now

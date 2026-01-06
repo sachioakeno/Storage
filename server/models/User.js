@@ -1,7 +1,13 @@
 const mongoose = require('mongoose');
 
 const userSchema = new mongoose.Schema({
-  username: { type: String, required: true, unique: true },
+  // Gunakan email sebagai satu-satunya identitas unik
+  email: { 
+    type: String, 
+    required: true, 
+    unique: true,
+    lowercase: true 
+  },
   password: { type: String, required: true }
 });
 
